@@ -1,0 +1,490 @@
+QUESTION 01
+
+
+.data
+    userArray: .space 80
+    revArray: .space 80 #this array is allocated for user's reversed version array
+    message: .asciiz "\nHello there! Please enter the size of the array: "
+    elements: .asciiz "\nNow, enter the elements for your array:\n"
+    warning: .asciiz "The size you have entered is invalid. You must enter max. 20 \n"
+    display: .asciiz "Your array elements: "
+    reverseArray: .asciiz "This is the reversed version of your array: "
+    done: .asciiz "\n Bye stranger :) "
+    thespace:.asciiz "  "
+    dot: .asciiz "-) "
+        
+ .text
+ 
+   welcome:
+       #t1 holds the max. size which is 20
+       li $t1, 20
+       li $s6, 0
+       
+       #display the message
+       li $v0, 4
+       la $a0, message
+       syscall
+       #user will enter the size
+       li $v0, 5
+       syscall
+       j validateSize
+       
+   validateSize: 
+       sgt $s1, $v0, $t1 #this instruction decides whether if the user array size exceeds max. size
+       bnez $s1, warnTheUser
+       beqz $s1, enterElementsMessage
+   
+   warnTheUser:
+       #display the message
+       li $v0, 4
+       la $a0, warning
+       syscall
+       b  welcome #branch welcome now
+       
+   enterElementsMessage:
+      # $t2 will hold the user array size for further use
+      # $t3 will hold the address of the array
+      
+      la $a1, userArray
+      la $s7, revArray #it will hold the reverse array address for further use.
+      
+      move $t3, $a1
+      move $t2, $v0
+      move $t6, $v0
+      move $s3, $v0
+      move $t5, $a1 #for further use, we have copied
+      
+      addi $s6, $s6, 1
+      
+      #now the user can enter the array elements
+      li $v0, 4
+      la $a0, elements
+      syscall
+      
+   enterElements:
+      li $v0, 1
+      add $a0, $s6, $zero
+      syscall
+      
+      li $v0, 4
+      la $a0, dot
+      syscall     
+      
+     
+      li $v0, 5
+      syscall
+      
+      addi $s6, $s6, 1
+      
+      sw $v0, 0($t3)#store the element user entered
+      seq $t7, $t2, 1
+      beq $t7, 1, enteringOver
+      addi $t3, $t3,4 #its is time for next element
+      subi $t2, $t2, 1 #subtract the size by 1 now
+      j enterElements
+      
+   enteringOver:
+      li $v0,4
+      la $a0, display
+      syscall
+      j displayElements
+  
+   displayElements: 
+      
+     lw $a0, 0($a1)
+     li $v0, 1
+     syscall
+     
+     li $v0, 4
+     la $a0, thespace
+     syscall
+     
+     beq $t6, 1, reverseElementsMessage# display completed, it is time for reverse version
+     addi $a1, $a1, 4 #trace next element
+     subi $t6, $t6, 1 #subtract the size now
+     j displayElements
+     
+   reverseElementsMessage:
+     li $v0,4
+     la $a0, reverseArray
+     syscall
+     
+   reverseNow:      
+     lw $t4, 0($a1) #copy the last element of the user's array.
+     sw $t4, 0($s7) #copy from user's array element into reversed array.  
+     
+     lw $a0, 0($s7)
+     li $v0, 1
+     syscall      
+     
+     li $v0, 4
+     la $a0, thespace
+     syscall
+     
+     beq $s3, 1, finish    
+     add $s7, $s7, 4
+     sub $a1, $a1, 4
+     subi $s3, $s3, 1 #subtract the size now 
+    
+     j reverseNow   
+     
+     
+   finish:
+   
+     li $v0,4
+     la $a0, done
+     syscall
+     
+     li $v0, 10
+     syscall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+QUESTION 02
+
+
+.data
+    userArray: .space 80
+    message: .asciiz "\nHello there! Please enter the size of the array: "
+    elements: .asciiz "\nNow, enter the elements for your array:\n"
+    warning: .asciiz "The size you have entered is invalid. You must enter max. 20 \n"
+    display: .asciiz "Your array elements: "
+    done: .asciiz "\n Bye stranger :) "
+    thespace:.asciiz "  "
+    dot: .asciiz "-) "
+    yes: "\n YES, IT IS A PALINDROME \n"
+    no: "\n NO, IT IS NOT A PALINDROME \n"
+    end:"\n THE END :)\n"
+        
+ .text
+ 
+   welcome:
+       #t1 holds the max. size which is 20
+       li $t1, 20
+       li $s6, 0
+       
+       #display the message
+       li $v0, 4
+       la $a0, message
+       syscall
+       #user will enter the size
+       li $v0, 5
+       syscall
+       j validateSize
+       
+   validateSize:
+           
+       sgt $s1, $v0, $t1 #this instruction decides whether if the user array size exceeds max. size
+       bnez $s1, warnTheUser
+       beqz $s1, enterElementsMessage
+   
+   warnTheUser:
+       #display the message
+       li $v0, 4
+       la $a0, warning
+       syscall
+       b  welcome #branch welcome now
+       
+   enterElementsMessage:
+      # $t2 will hold the user array size for further use
+      # $t3 will hold the address of the array
+      
+      beqz $v0, yesPalindrome #if the size is 0, the array is palindrome
+      beq  $v0, 1, yesPalindrome #if the size is 1, the array is palindrome      
+      la $a1, userArray
+      move $t3, $a1
+      move $t2, $v0
+      move $s7, $v0
+      move $t6, $v0
+      move $t5, $a1 #for further use, we have copied
+      
+      addi $s6, $s6, 1
+      
+      #now the user can enter the array elements
+      li $v0, 4
+      la $a0, elements
+      syscall
+      
+   enterElements:
+      li $v0, 1
+      add $a0, $s6, $zero
+      syscall
+      
+      li $v0, 4
+      la $a0, dot
+      syscall     
+      
+     
+      li $v0, 5
+      syscall
+      
+      addi $s6, $s6, 1
+      
+      sw $v0, 0($t3)#store the element user entered
+      seq $t7, $t2, 1
+      beq $t7, 1, enteringOver
+      addi $t3, $t3,4 #its is time for next element
+      subi $t2, $t2, 1 #subtract the size by 1 now
+      j enterElements
+      
+   enteringOver:
+      li $v0,4
+      la $a0, display
+      syscall
+      j displayElements
+  
+   displayElements: 
+      
+     lw $a0, 0($a1)
+     li $v0, 1
+     syscall
+     
+     li $v0, 4
+     la $a0, thespace
+     syscall
+     
+     beq $t6, 1, computeMiddle# display completed, it is time for reverse version
+     addi $a1, $a1, 4 #trace next element
+     subi $t6, $t6, 1 #subtract the size now
+     j displayElements
+  
+  computeMiddle:
+  
+     #now we will hold the address of the middle element
+     #add $t4, $t5, $a1
+     #srl $t4, $t4, 1 #now $t4 holds the address of the middle element of the array
+     sra $t4, $s7, 1
+     
+     j palindromeDecision
+  
+  palindromeDecision:
+  
+    #compare the elements from begin and end
+    
+    lw $s4, 0($t5) #load from begin
+    lw $s5, 0($a1) #load from end
+    
+    bne $s4, $s5, noPalindrome
+    addi $t5, $t5, 4 #update left side
+    subi $a1, $a1, 4 #update right side
+    addi $t4,$t4,-1 #decrement the midpoint to trace the comparisons
+    beq  $t4, 0, yesPalindrome
+    #beq $t4, $t5, checkMiddleRight
+    j palindromeDecision
+    
+  checkMiddleRight:
+  
+    beq $a1, $t4, yesPalindrome
+        
+  yesPalindrome:
+     li $v0,4
+     la $a0, yes
+     syscall
+     
+     j endingScene
+ 
+ noPalindrome:
+     li $v0,4
+     la $a0, no
+     syscall
+     
+     j endingScene
+     
+ endingScene:
+     li $v0,4
+     la $a0,end
+     syscall
+     
+     li $v0,10
+     syscall
+
+
+
+
+
+QUESTION 03:
+
+
+.data
+   input1: .asciiz "Please enter your first input as integer: \n"
+   input2: .asciiz "Please enter your second input as integer: \n"
+   welcome: .asciiz "Hello there! \n"
+   results: .asciiz "Here are the results: \n"
+   division: .asciiz "Here is the division: "
+   blank: .asciiz "\n"
+   remainder: .asciiz "\nHere is the remainder: "
+   bye: .asciiz "\nBye :) "
+   
+.text
+
+ entering:
+   li $v0, 4
+   la $a0, welcome
+   syscall
+   
+   li $v0, 4
+   la $a0, input1
+   syscall
+   
+   li $v0,5 
+   syscall
+   
+   move $t0, $v0#input1 is copied
+   move $t2, $v0#input1 is copied for further use in the loop
+
+   li $t3, 0#this is for holding the result, for quotient (case: all inputs are positive)
+   li $t4, 0#this is for holding remainder
+   li $t5, 0#this is for holding the result, for quotient (case: all inputs are positive)
+   li $s0, 0#for checking sign of inputs for further use
+   li $s1, 0#for checking sign of inputs for further use
+   li $s2, 0# this is for OR operation for further use
+   li $s3, 0#this is for AND operation for further use
+   li $s4, 0#this is for XOR operation for further use
+      
+   li $v0, 4
+   la $a0, input2
+   syscall
+   
+   li $v0,5 
+   syscall
+   
+   move $t1, $v0 #input2 is copied
+   
+   checkSignOfInputs:
+     slt $s0, $t0, $zero #check the sign of input1     
+     slt $s1, $t1, $zero #check the sign of input2
+     or $s2, $s1, $s0 #s2=0 go to allPositiveLoop
+     and $s3, $s1, $s0
+     xor $s4, $s1, $s0 #if inputs have different sign 
+     beq $s2, 0, allPositiveLoop
+     beq $s3, 1, allNegativeLoop
+     beq $s4, 1, difSignLoop
+     
+   difSignLoop:
+     bgez $t0, difSignLoop1
+     blez $t0, difSignLoop2
+     
+   difSignLoop1:
+     blez  $t2, findRemainder
+     add $t2, $t2, $t1
+     subi $t3, $t3, 1
+     j difSignLoop1
+     
+   difSignLoop2:
+     bgez $t2, findRemainder
+     add $t2, $t2, $t1
+     sub $t3, $t3, 1
+     j difSignLoop2
+   
+   #if all the inputs are positive, go to allPositiveLoop  
+   allPositiveLoop: 
+    
+     blt $t2, $t1, findRemainder
+     sub $t2, $t2, $t1
+     addi $t3, $t3, 1
+     j allPositiveLoop
+     
+  #if all the inputs are negative, go to allNegativeLoop     
+  allNegativeLoop:
+   
+     sge $t7, $t2, $zero
+     beq $t7, 1, findRemainder
+     sub $t2, $t2, $t1
+     addi $t5, $t5, 1
+     j allNegativeLoop         
+     
+   findRemainder:
+      
+     rem $t4, $t0, $t1     
+      
+  printResults:  
+              
+      li $v0,4
+      la $a0, results
+      syscall
+      
+      li $v0, 4
+      la $a0, division
+      syscall
+      
+      beq $s2, 0, printPosRes
+      beq $s3, 1, printNegRes
+      
+  printPosRes:
+        
+      li $v0, 1
+      move $a0, $t3
+      syscall
+      
+      li $v0, 4
+      la $a0, remainder
+      syscall
+      
+      li $v0,1
+      move $a0, $t4
+      syscall
+      
+      j done
+      
+ printNegRes:
+     
+      li $v0, 1
+      move $a0, $t5
+      syscall
+      
+      li $v0, 4
+      la $a0, remainder
+      syscall
+      
+      li $v0,1
+      move $a0, $t4
+      syscall
+      
+      j done
+  
+  done:
+    
+     li $v0,4
+     la $a0, bye
+     syscall
+     
+     li $v0, 10
+     syscall
+  
+   
+
+     
+     
+     
+     
+     
+     
+     
+    
+      
+   
+                
+      
+      
+   
+       
+      
+       
+       
+       
+      
+    
+    
+    
+    
