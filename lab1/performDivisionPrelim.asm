@@ -1,6 +1,6 @@
 ####################################################################################################################
 
-#Author: Aybüke Ceren Duran
+#Author: AybÃ¼ke Ceren Duran
 #Lab01 Preliminary question 03
 #Section: 03
 #ID: 21302686
@@ -152,17 +152,4 @@
      
      li $v0, 10
      syscall
-  
-      
-      
-   
-  
-   
-   
-   
-   
-   
-  
- 
-   
    
