@@ -1,6 +1,6 @@
 ####################################################################################################################
 
-#Author: Aybüke Ceren Duran
+#Author: AybÃ¼ke Ceren Duran
 #Lab02 Preliminary question 1a
 #Section: 03
 #ID: 21302686
@@ -100,21 +100,3 @@
    li $v0,1
    syscall
    jr $ra   
-  
-  
-      
-  
-   
-  
-   
- 
-   
-   
-   
-   
-   
-   
-   
-   
-  
-  
