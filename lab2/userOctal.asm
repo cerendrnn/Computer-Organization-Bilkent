@@ -1,6 +1,6 @@
 ####################################################################################################################
 
-#Author: Aybüke Ceren Duran
+#Author: AybÃ¼ke Ceren Duran
 #Lab02 Preliminary question 1b
 #Section: 03
 #ID: 21302686
@@ -144,16 +144,4 @@ entering:
    move $a0, $s2
    li $v0,1
    syscall
-   jr $ra   
-  
- 
- 
-     
-     
-   
-   
-   
-   
-   
-   
-   
+   jr $ra    
