@@ -1,6 +1,6 @@
 ####################################################################################################################
 
-#Author: Aybüke Ceren Duran
+#Author: AybÃ¼ke Ceren Duran
 #Section: 03
 #ID: 21302686
 
@@ -571,14 +571,4 @@ enterElements:
 
 enteringOver:
    
-   jr $ra #end of enterElements function, now go to readArray function again.
-   
-
-   
-   
-   
-   
- 
-   
-   
-   
+   jr $ra #end of enterElements function, now go to readArray function again. 
