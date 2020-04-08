@@ -260,33 +260,5 @@ entering:
    move $a0, $s2
    li $v0,1
    syscall
-   jr $ra   
-  
- 
- 
-     
-     
+   jr $ra        
    
-   
-   
-   
-   
-   
-   
-
-      
-  
-   
-  
-   
- 
-   
-   
-   
-   
-   
-   
-   
-   
-  
-  
