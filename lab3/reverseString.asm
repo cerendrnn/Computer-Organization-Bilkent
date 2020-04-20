@@ -1,6 +1,6 @@
 ####################################################################################################################
 
-#Author: Aybüke Ceren Duran
+#Author: AybÃ¼ke Ceren Duran
 #Section: 03
 #Lab: 03
 #ID: 21302686
@@ -108,15 +108,5 @@ recursivePart:
   sb  $t4, 0($t3) #put the value of the last element into reversed array
   addi $sp, $sp, 12
   move $v0, $a1
-  jr $ra
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+  jr $ra 
   
