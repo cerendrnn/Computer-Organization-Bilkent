@@ -1,4 +1,4 @@
-     addi $v0, $zero, 5
+addi $v0, $zero, 5
 addi $v1, $zero, 0x000C
 addi $a3, $v1, 0xFFF7
 or $a0, $a3, $v0
@@ -19,24 +19,13 @@ sw $v0, 0x0054 $zero
 j 0x0000012
 
 
+RTL expressions of “subi”:
 
+ IM[PC]
+ RF[rt] ← RF[rs] – SignExt(immed)
+ PC←PC+4
 
+RTL expressions of “jm” :
 
-
-
-
-
-
-
-      RTL expressions of “subi”:
-
-      IM[PC]
-      RF[rt] ← RF[rs] – SignExt(immed)
-      PC←PC+4
-
-      RTL expressions of “jm” :
-
-      IM[PC]
-      PC ←mem[ R[rs] + ZeroExt(imm)]
-
-
+IM[PC]
+PC ←mem[ R[rs] + ZeroExt(imm)]
