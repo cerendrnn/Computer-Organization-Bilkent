@@ -1,0 +1,74 @@
+Two kind of hazards can happen in this pipeline: 
+-	Data hazard
+-	Control hazard
+
+     Data hazards in this pipeline are “compute-use” during EXECUTE-MEM stage, “compute-store” during EXECUTE-MEM stage, “load-use” and “load-store” are during DECODE stage. On the other hand, control hazards are “ branch “ and “J-type jump” which can happen during “FETCH-DECODE” stage.
+    These hazards can be solved by many solutions. Stalling is a solution which provides a way to prevent structural, branch and data hazards from happening. Also forwarding is way to solve data hazards. Stalling and forwarding are effective hardware solutions for hazards.
+     Insertion of NOPS as a software solution  is another way to solve data hazards whenever data dependencies are present and may cause hazards. Instead of using NOPs, if possible the code can be rearranged so that be prevented from any data dependencies that may cause to hazards.
+    Also Branch Prediction tables are another solution for preventing the program from branch hazards. If by using branch prediction tables, the branch address is retrieved but it turns out that it shouldn’t have been taken, then Flushing can help. By flushing most recent instructions which have taken us by mistake to the branch address, the correct instruction will be fetched into the pipeline and the program will execute correctly. Flushing also helps in “J-type jump” hazards.
+
+FORWARDING: (for rt  is identical with rs so there is no need to show it since it would be a duplicate of the lines written below)
+if ((rsE != 0) AND (rsE == WriteRegM) AND RegWriteM) then 
+ForwardAE = 10 
+else if ((rsE != 0) AND (rsE == WriteRegW) AND RegWriteW) then 
+ForwardAE = 01 
+else 
+ForwardAE = 00
+lwstall = ((rsD = = rtE) OR (rtD = = rtE)) AND MemtoRegE 
+StallF = StallD = FlushE = lwstall
+
+FORWARDING (Decode stage):
+ForwardAD = (rsD != 0) AND (rsD == WriteRegM) AND RegWriteM 
+ForwardBD = (rtD != 0) AND (rtD == WriteRegM) AND RegWriteM
+Stalling logic:
+	branchstall = BranchD AND RegWriteE AND 
+                   (WriteRegE == rsD OR WriteRegE == rtD) 
+                 OR 
+			  BranchD AND MemtoRegM AND 
+                   (WriteRegM == rsD OR WriteRegM == rtD)
+	StallF = StallD = FlushE = (lwstall OR branchstall)
+OR;
+branchstall = 
+BranchD AND RegWriteE AND (WriteRegE == rsD OR WriteRegE == rtD) OR
+ BranchD AND MemtoRegM AND (WriteRegM == rsD OR WriteRegM == rtD)
+load or a branch hazard:
+ StallF = StallD = FlushE = lwstall OR branchstall
+
+module maindec (input logic[5:0] op,
+                              output logic memtoreg, memwrite, branch,
+                              output logic alusrc, regdst, regwrite, jump,
+                              output logic[1:0] aluop );
+   logic [11:0] controls;			// the added control signals according to the table 
+   assign {regwrite, regdst, alusrc, branch, memwrite,
+                memtoreg,  aluop, jump} = controls;
+  always_comb
+    case(op)
+      6'b000000: controls <= 12'b101000001X00; // R-type
+      6'b100011: controls <= 12'b100100010000; // LW
+      6'b101011: controls <= 12'b0XX101XX0000; // SW
+      6'b000100: controls <= 12'b0XX010XX0100; // BEQ
+      6'b001000: controls <= 12'b100100000000; // ADDI
+      6'b000010: controls <= 12'b0XXXX0XXXX01; // J
+      6'b011101: controls <= 12'b110X0010XX10; // JALR
+      6'b011111: controls <= 12'b111001110000; // PUSH
+      default:   controls <= 9'bxxxxxxxxx; // illegal op
+    endcase
+endmodule
+endmodule
+module controller(input  logic[5:0] op, funct,
+                  input  logic     zero,
+                  output logic[1:0]     memtoreg, memwrite, regdst, jump
+                  output logic     pcsrc, alusrc, regwrite,
+                  output logic[2:0] alucontrol);
+   logic [1:0] aluop;
+   logic       branch;
+aludec  ad (funct, aluop, alucontrol);
+   assign pcsrc = branch & zero;
+endmodule
+
+
+
+module alu(input  logic [31:0] a, b,
+           input  logic [2:0]  alucont,
+           output logic [31:0] result,
+           output logic zero);
