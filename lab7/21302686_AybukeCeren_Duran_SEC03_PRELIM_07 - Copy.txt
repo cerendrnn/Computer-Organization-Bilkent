@@ -1,0 +1,233 @@
+c-)  C code for part2.a
+int main(void) {
+  int leds;
+  TRISD = 0xFFFF;     //port d takes input and reads the 2 pushbuttons
+  TRISA = 0x0000; 	// port a outputs the pattern of the leds and turns them on or off    //accordingly
+   leds = 0x0088 // the 8-bit pattern 10001000 to the leds
+   Delay_ms(1000); // delaying with 1.0 seconds
+ 
+  while (1) {
+    // rotates to the right if DIR = 0 and rotates to the left if DIR = 1
+    PORTA = leds; //display on leds
+    if(RE7_bit) { //rotate left and mask bits
+	if (RE6_bit){ // if EN = 1 the pattern is displayed
+leds<<1 & 0xFF;
+leds<<7 & 0xFF;
+                        Delay_ms(1000); // delaying with 1.0 seconds
+      }
+}
+       else { // rotate right and mask bits
+if (RE6_bit){ // if EN = 1 the pattern is displayed
+leds>>1 & 0xFF;
+leds >>7 & 0xFF;
+                        Delay_ms(1000); // delaying with 1.0 seconds
+           }
+if (! RE6_bit){ // if EN = 0 the pattern is frozen
+                        Delay_ms(1000); // delaying with 1.0 seconds
+                        PORTA = 0xffff;
+           }
+       }
+    }
+}
+
+
+
+d-)C code for part2. B
+
+int fourthDig,thirdDig,secondDig,firstDig;  //digits to be displayed in 7seg
+int xNumber;    //our x value
+int output;     //our f(x)
+int slowTemp;   // temporary needed to make execution slower and visible
+
+
+int dispNr;        //which digit will be represented
+
+
+void setNUM4(int dispNr){ //helper function for the configurations of each digit
+ if (dispNr == 9) {
+  PORTD = 0b01101111;
+ }
+ else if (dispNr == 8){
+  PORTD = 0b01111111;
+ }
+ else if (dispNr == 7) {
+  PORTD = 0b00000111;
+ }
+ else if (dispNr == 6) {
+  PORTD = 0b01111101;
+ }
+ else if (dispNr == 5) {
+  PORTD = 0b01101101;
+ }
+ else if (dispNr == 4) {
+  PORTD = 0b01100110;
+ }
+ else if (dispNr == 3) {
+  PORTD = 0b01001111;
+ }
+ else if (dispNr == 2) {
+  PORTD = 0b01011011;
+ }
+ else if (dispNr == 1) {
+  PORTD = 0b00000110;
+ }
+ else{
+  PORTD = 0b00111111;
+ }
+
+}
+
+
+void setNUM3(int dispNr){ //helper function for the configurations of each digit
+ if (dispNr == 9) {
+  PORTD = 0b01101111;
+ }
+ else if (dispNr == 8){
+  PORTD = 0b01111111;
+ }
+ else if (dispNr == 7) {
+  PORTD = 0b00000111;
+ }
+ else if (dispNr == 6) {
+  PORTD = 0b01111101;
+ }
+ else if (dispNr == 5) {
+  PORTD = 0b01101101;
+ }
+ else if (dispNr == 4) {
+  PORTD = 0b01100110;
+ }
+ else if (dispNr == 3) {
+  PORTD = 0b01001111;
+ }
+ else if (dispNr == 2) {
+  PORTD = 0b01011011;
+ }
+ else if (dispNr == 1) {
+  PORTD = 0b00000110;
+ }
+ else{
+  PORTD = 0b00111111;
+ }
+
+}
+
+
+void setNUM2(int dispNr){ //helper function for the configurations of each digit
+ if (dispNr == 9) {
+  PORTD = 0b01101111;
+ }
+ else if (dispNr == 8){
+  PORTD = 0b01111111;
+ }
+ else if (dispNr == 7) {
+  PORTD = 0b00000111;
+ }
+ else if (dispNr == 6) {
+  PORTD = 0b01111101;
+ }
+ else if (dispNr == 5) {
+  PORTD = 0b01101101;
+ }
+ else if (dispNr == 4) {
+  PORTD = 0b01100110;
+ }
+ else if (dispNr == 3) {
+  PORTD = 0b01001111;
+ }
+ else if (dispNr == 2) {
+  PORTD = 0b01011011;
+ }
+ else if (dispNr == 1) {
+  PORTD = 0b00000110;
+ }
+ else{
+  PORTD = 0b00111111;
+ }
+
+}
+
+int a,b;
+int modulus(int number){    //compute the modulus of a number with 10
+    a = number / 10;
+    b = a * 10;
+    return number - b;     //modulus
+
+}
+
+
+void setNUM1(int dispNr){ //helper function for the configurations of each digit
+ if (dispNr == 9) {
+  PORTD = 0b01101111;
+ }
+ else if (dispNr == 8){
+  PORTD = 0b01111111;
+ }
+ else if (dispNr == 7) {
+  PORTD = 0b00000111;
+ }
+ else if (dispNr == 6) {
+  PORTD = 0b01111101;
+ }
+ else if (dispNr == 5) {
+  PORTD = 0b01101101;
+ }
+ else if (dispNr == 4) {
+  PORTD = 0b01100110;
+ }
+ else if (dispNr == 3) {
+  PORTD = 0b01001111;
+ }
+ else if (dispNr == 2) {
+  PORTD = 0b01011011;
+ }
+ else if (dispNr == 1) {
+  PORTD = 0b00000110;
+ }
+ else{
+  PORTD = 0b00111111;
+ }
+
+}
+void main() {
+     xNumber = 1   //our x variable
+     output = 1;   //our output of cubic x  
+     TRISD = 0;   //output
+     TRISG = 0;   //output
+     do{
+
+        output = xNumber * xNumber * xNumber; //
+        if (output == 9261 ){            //if the 21th number is reached
+           xNumber =1;                   //start from the beginning
+        }
+        else{
+            xNumber = xNumber +1;       //else update our x value by increasing 1
+        }
+        firstDig = modulus(output);   //get first digit
+        output = output / 10;
+        secondDig = modulus(output);  //get second digit
+        output = output / 10;
+        thirdDig = modulus(output);   //get third digit
+        output = output / 10;
+        fourthDig = modulus(output);  //get fourth digit
+        for (slowTemp  = 0; slowTemp < 300; slowTemp++){    //run the loop to slow down the result so it becomes visible
+
+         setNUM1(firstDig);          //first nr in 7seg
+         PORTG = 0x00b0;
+         Delay_ms(1);
+
+         setNUM2(secondDig);        //second nr in 7seg
+         PORTG = 0x0040;
+         Delay_ms(1);
+
+         setNUM3(thirdDig);        //third nr in 7seg
+         PORTG = 0x0002;
+         Delay_ms(1);
+
+         setNUM4(fourthDig);       //fourth nr in 7seg
+         PORTG = 0x0001;
+         Delay_ms(1);
+        }
+     }while(1);
+}
+
